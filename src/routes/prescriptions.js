@@ -173,7 +173,7 @@ router.get('/:id/pdf', authenticate, async (req, res, next) => {
     doc.fontSize(10).font('Helvetica').fillColor('#333')
        .text(`${rx.qualification||''} | ${rx.specialization||''}`, 50, 66)
        .text(`Reg. No: ${rx.registration_number||''}`, 50, 80)
-       .text(`${rx.clinic_name||''} | ${rx.clinic_address||''}`, 50, 94);
+       .text([rx.clinic_name, rx.clinic_address].filter(Boolean).join(' | ') || '', 50, 94);
     if (rx.clinic_phone) doc.text(`Tel: ${rx.clinic_phone}`, 50, 108);
 
     // Right: pharmacy
@@ -268,7 +268,7 @@ router.get('/:id/pdf', authenticate, async (req, res, next) => {
        .text(`Reg: ${rx.registration_number||''}`, 380, sigY+28);
 
     doc.fontSize(7).fillColor('#aaa')
-       .text('This is a digitally generated prescription. Valid subject to physical verification.', 50, 795, { align:'center', width:495 });
+       .text('This is a digitally generated prescription. Valid subject to physical verification.', 50, doc.page.height - 62, { align:'center', width:495 });
     doc.end();
   } catch (err) { next(err); }
 });

@@ -29,7 +29,7 @@ router.get('/doctors', authenticate, async (req, res, next) => {
     const rows = await db.getAll(
       `SELECT u.id, u.name, u.email, u.phone,
               dp.specialization, dp.registration_number, dp.qualification,
-              dp.clinic_name, dp.clinic_phone
+              dp.clinic_name, dp.clinic_address, dp.clinic_phone
        FROM users u
        JOIN roles r ON u.role_id = r.id
        LEFT JOIN doctor_profiles dp ON dp.user_id = u.id
