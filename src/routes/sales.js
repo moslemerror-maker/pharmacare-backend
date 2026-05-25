@@ -32,7 +32,7 @@ router.get('/', authenticate, async (req, res, next) => {
     );
     const tot = await db.getOne(
       `SELECT COUNT(*) AS c, COALESCE(SUM(total_amount),0) AS sum
-       FROM sales s WHERE ${where.slice(0,-0).join(' AND ')}`,
+       FROM sales s WHERE ${where.join(' AND ')}`,
       params.slice(0,-2)
     );
     res.json({ data: rows, total: parseInt(tot.c), totalAmount: parseFloat(tot.sum) });

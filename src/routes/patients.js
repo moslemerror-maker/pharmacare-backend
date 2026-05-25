@@ -32,7 +32,7 @@ router.get('/', authenticate, async (req, res, next) => {
 router.get('/:id', authenticate, async (req, res, next) => {
   try {
     const p = await db.getOne(
-      'SELECT * FROM patients WHERE id = $1 OR patient_id = $1',
+      'SELECT * FROM patients WHERE id::text = $1 OR patient_id = $1',
       [req.params.id]
     );
     if (!p) return res.status(404).json({ error: 'Patient not found' });

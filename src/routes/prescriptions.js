@@ -39,7 +39,7 @@ router.get('/', authenticate, async (req, res, next) => {
       params
     );
     const total = await db.getOne(
-      `SELECT COUNT(*) AS c FROM prescriptions pr WHERE ${where.slice(0,-0).join(' AND ')}`,
+      `SELECT COUNT(*) AS c FROM prescriptions pr WHERE ${where.join(' AND ')}`,
       params.slice(0,-2)
     );
     res.json({ data: rows, total: parseInt(total.c) });
