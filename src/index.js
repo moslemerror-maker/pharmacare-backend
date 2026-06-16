@@ -13,10 +13,15 @@ const PORT = process.env.PORT || 5000;
 ;(async () => {
   try {
     const db = require('./config/database');
+    // Add username column
     await db.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS username VARCHAR(50)`);
+    // Make email optional (drop NOT NULL if it exists)
+    await db.query(`ALTER TABLE users ALTER COLUMN email DROP NOT NULL`);
+    // Unique index on username (partial — ignores NULLs)
     await db.query(`CREATE UNIQUE INDEX IF NOT EXISTS users_username_uidx ON users (LOWER(username)) WHERE username IS NOT NULL`);
+    console.log('[migration] DB schema up to date');
   } catch (e) {
-    console.warn('[migration] username column:', e.message);
+    console.warn('[migration]', e.message);
   }
 })()
 

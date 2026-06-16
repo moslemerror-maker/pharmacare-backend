@@ -79,11 +79,14 @@ router.post('/', authenticate, authorize('admin'), async (req, res, next) => {
       if (existingEmail) return res.status(409).json({ error: 'Email already registered' });
     }
 
+    // Use placeholder if email column is still NOT NULL (safe fallback)
+    const emailVal = cleanEmail || `${username.trim().toLowerCase()}@clinic.local`;
+
     const hash = bcrypt.hashSync(password, 10);
     const user = await db.getOne(
       `INSERT INTO users (name, username, email, phone, password_hash, role_id)
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, username, email`,
-      [name.trim(), username.trim().toLowerCase(), cleanEmail, phone?.trim() || null, hash, role.id]
+      [name.trim(), username.trim().toLowerCase(), emailVal, phone?.trim() || null, hash, role.id]
     );
 
     if (role_name === 'doctor') {
