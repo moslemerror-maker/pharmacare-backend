@@ -9,6 +9,17 @@ const path    = require('path');
 const app  = express();
 const PORT = process.env.PORT || 5000;
 
+// ── Startup DB migration (idempotent) ─────────────────────
+;(async () => {
+  try {
+    const db = require('./config/database');
+    await db.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS username VARCHAR(50)`);
+    await db.query(`CREATE UNIQUE INDEX IF NOT EXISTS users_username_uidx ON users (LOWER(username)) WHERE username IS NOT NULL`);
+  } catch (e) {
+    console.warn('[migration] username column:', e.message);
+  }
+})()
+
 // ── Security & middleware ──────────────────────────────────
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 
